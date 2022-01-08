@@ -4,10 +4,13 @@ import {User} from "./entity/User";
 import * as express from 'express';
 import {Request, Response} from 'express';
 import { RegisterDTO } from "./dto/request/register.dto";
+import { Database } from "./database";
 
 const app = express();
 
 app.use(express.json());
+
+Database.initialize();
 
 app.get("/", (req: Request, res: Response) => {
 
@@ -16,22 +19,40 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post("/register", (req: Request, res: Response) => {
 
-    const body: RegisterDTO = req.body;
+    try {
+        const body: RegisterDTO = req.body;
 
-    // validate the body
+        // check if email is set and represents a valid email format
 
-    // validate if the email is already being used
+        // validate the body
+        if(body.password !== body.repeatPassword)
+            throw new Error("repeat password does not match password");
 
-    // store the user
+        // validate if the email is already being used
+        if(Database.userRepository.findOne({email: body.email}))
+            throw new Error("e-mail is already being used");
 
-    res.json({
-        token: "Dummy token",
-        refreshToken: "dummy-refreshToken",
-        user: {
-            id: 1,
-            username: "dummy"
-        }
-    })
+        // store the user
+        const user = new User();
+        user.username = body.username;
+        user.email = body.email;
+        
+
+        res.json({
+            token: "Dummy token",
+            refreshToken: "dummy-refreshToken",
+            user: {
+                id: 1,
+                username: "dummy"
+            },
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+    
 })
 
 app.listen(4000, () => console.log("Listening on this port", 4000))
