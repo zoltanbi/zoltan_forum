@@ -3,6 +3,7 @@ import {createConnection} from "typeorm";
 import {User} from "./entity/User";
 import * as express from 'express';
 import {Request, Response} from 'express';
+import { RegisterDTO } from "./dto/request/register.dto";
 
 const app = express();
 
@@ -15,10 +16,14 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post("/register", (req: Request, res: Response) => {
 
-    const body = req.body;
+    const body: RegisterDTO = req.body;
 
-    console.log(body);
-    
+    // validate the body
+
+    // validate if the email is already being used
+
+    // store the user
+
     res.json({
         token: "Dummy token",
         refreshToken: "dummy-refreshToken",
