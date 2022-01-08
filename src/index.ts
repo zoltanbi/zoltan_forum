@@ -5,6 +5,7 @@ import * as express from 'express';
 import {Request, Response} from 'express';
 import { RegisterDTO } from "./dto/request/register.dto";
 import { Database } from "./database";
+import { PasswordHash } from "./security/passwordHash";
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.get("/", (req: Request, res: Response) => {
     res.send("Hello there")
 })
 
-app.post("/register", (req: Request, res: Response) => {
+app.post("/register", async (req: Request, res: Response) => {
 
     try {
         const body: RegisterDTO = req.body;
@@ -36,7 +37,10 @@ app.post("/register", (req: Request, res: Response) => {
         const user = new User();
         user.username = body.username;
         user.email = body.email;
-        
+        user.password = await PasswordHash.hashPassword(body.password);
+        user.age = body.age;
+
+        await Database.userRepository.save(user);
 
         res.json({
             token: "Dummy token",
