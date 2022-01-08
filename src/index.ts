@@ -6,6 +6,8 @@ import {Request, Response} from 'express';
 import { RegisterDTO } from "./dto/request/register.dto";
 import { Database } from "./database";
 import { PasswordHash } from "./security/passwordHash";
+import { AuthenticationDTO } from "./dto/response/authentication.dto";
+import { UserDTO } from "./dto/response/user.dto";
 
 const app = express();
 
@@ -42,14 +44,17 @@ app.post("/register", async (req: Request, res: Response) => {
 
         await Database.userRepository.save(user);
 
-        res.json({
-            token: "Dummy token",
-            refreshToken: "dummy-refreshToken",
-            user: {
-                id: 1,
-                username: "dummy"
-            },
-        });
+        const authenticationDTO = new AuthenticationDTO();
+        const userDTO: UserDTO = new UserDTO();
+
+        userDTO.id = user.id;
+        userDTO.username = user.username;
+        userDTO.email = user.email;
+        userDTO.age = user.age;
+
+        authenticationDTO.user = userDTO;
+
+        res.json(authenticationDTO);
 
     } catch (error) {
         res.status(500).json({
