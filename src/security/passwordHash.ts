@@ -11,4 +11,11 @@ export class PasswordHash {
 
         return hashedPassword;
     }
+
+    public static async isPasswordValid(
+        plainPassword: string,
+        hashedPassword: string
+    ) {
+        return await bcrypt.compareSync(plainPassword, hashedPassword);
+    }
 }
