@@ -8,6 +8,7 @@ import { Database } from "./database";
 import { PasswordHash } from "./security/passwordHash";
 import { AuthenticationDTO } from "./dto/response/authentication.dto";
 import { UserDTO } from "./dto/response/user.dto";
+import { EntityToDTO } from "./util/entityToDTO";
 
 const app = express();
 
@@ -32,7 +33,7 @@ app.post("/register", async (req: Request, res: Response) => {
             throw new Error("repeat password does not match password");
 
         // validate if the email is already being used
-        if(Database.userRepository.findOne({email: body.email}))
+        if(await Database.userRepository.findOne({email: body.email}))
             throw new Error("e-mail is already being used");
 
         // store the user
@@ -45,14 +46,10 @@ app.post("/register", async (req: Request, res: Response) => {
         await Database.userRepository.save(user);
 
         const authenticationDTO = new AuthenticationDTO();
-        const userDTO: UserDTO = new UserDTO();
-
-        userDTO.id = user.id;
-        userDTO.username = user.username;
-        userDTO.email = user.email;
-        userDTO.age = user.age;
+        const userDTO: UserDTO = EntityToDTO.userToDTO(user);
 
         authenticationDTO.user = userDTO;
+        authenticationDTO.test = "test123";
 
         res.json(authenticationDTO);
 
