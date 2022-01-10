@@ -11,6 +11,7 @@ import { UserDTO } from "./dto/response/user.dto";
 import { EntityToDTO } from "./util/entityToDTO";
 import * as session from 'express-session';
 import * as connectRedis from 'connect-redis'
+import { LoginDTO } from "./dto/request/login.dto";
 const redis = require('redis');
 
 const app = express();
@@ -84,9 +85,22 @@ app.post("/register", async (req: Request, res: Response) => {
     
 })
 
+// unprotected login endpoint
+app.post('/login', (req, res) => {
+    const body: LoginDTO = req.body;
+
+    //check if credentials are correct
+    // ...
+
+    // assume that credentials are correct
+
+    req.session.clientId = 'abc123';
+    req.session.myNum = 5;
+
+    res.json("you are now logged in");
+});
+
 app.listen(4000, () => console.log("Listening on this port", 4000))
-
-
 
 createConnection().then(async connection => {
 
