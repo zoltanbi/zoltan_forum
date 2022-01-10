@@ -9,8 +9,31 @@ import { PasswordHash } from "./security/passwordHash";
 import { AuthenticationDTO } from "./dto/response/authentication.dto";
 import { UserDTO } from "./dto/response/user.dto";
 import { EntityToDTO } from "./util/entityToDTO";
+import * as session from 'express-session';
+import * as connectRedis from 'connect-redis'
+const redis = require('redis');
 
 const app = express();
+
+const RedisStore = connectRedis(session);
+
+// configure redis
+const redisClient = redis.createClient({
+    port: 6379,
+    host: 'localhost'
+});
+
+app.use(session({
+    store: new RedisStore({client: redisClient}),
+    secret: 'secret tba to encrypt session',
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+        secure: false, // production should be true to transmit only through https
+        httpOnly: true, // prevents client side js from reading cookie
+        maxAge: 1000 * 60 * 30
+    }
+}));
 
 app.use(express.json());
 
