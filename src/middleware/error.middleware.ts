@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express"
+import { Request, Response, NextFunction, response } from "express"
 import { HttpError } from "../error/httpError"
 
 export const errorMiddleware = (
@@ -23,3 +23,4 @@ export const errorMiddleware = (
         message: err.message,
     });
 };
+

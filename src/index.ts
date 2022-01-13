@@ -2,6 +2,7 @@
 // import {createConnection} from "typeorm";
 // import {User} from "./entity/User";
 import * as express from 'express';
+import { UserDTO } from './dto/response/user.dto';
 // import {Request, Response} from 'express';
 // import { RegisterDTO } from "./dto/request/register.dto";
 // import { Database } from "./database";
@@ -18,8 +19,7 @@ const app = express();
 
 declare module "express-session" {
     export interface SessionData {
-        clientId: string;
-        myNum: number;
+        user: UserDTO;
     }
 }
 
